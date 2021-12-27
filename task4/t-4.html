@@ -1,0 +1,252 @@
+<!-- 
+    Student: Ilya Mazin
+    Group: M8O-106M-21
+    Variant: 17 
+-->
+<div style="margin: 20px" id="description">
+  <h1 id="name">Мазин Илья Александрович</h1>
+  <h2>Группа М8О-106М-21</h2>
+  <h2>Вариант 11</h2>
+
+  <ul>
+    <li>hasClass()</li>
+    <li>height(), innerHeight(), outerHeight()</li>
+    <li>:disabled</li>
+    <li>outerHeight()</li>
+    <li>before(), insertBefore()</li>
+    <li>next()</li>
+    <li>one()</li>
+    <li>mouseout()</li>
+    <li>keydown()</li>
+    <li>toggle()</li>
+  </ul>
+</div>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .circle {
+        border-radius: 100%;
+        background-color:aqua;
+        height: 150px;
+        width: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 25px;
+        margin: 10px;
+      }
+
+      .stackHorizontally {
+        display: flex;
+        align-items: center;
+        /* flex-direction: column; */
+        justify-content: center;
+      }
+
+      .controls {
+        margin: 20px;
+      }
+
+      .button {
+        background-color: white;
+        border: 0px;
+        cursor: pointer;
+      }
+
+      .button:active {
+        background-color: rgb(209, 207, 207);
+      }
+
+      .stack {
+        margin: 10px;
+      }
+
+      #root {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .circlesStackDiv {
+        height: 300px;
+        vertical-align: middle;
+        display: table-cell;
+      }
+
+      .filler {
+        min-height: 100px;
+      }
+
+      .label {
+        font-size: 25px;
+      }
+
+      .control {
+        margin: 5px
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="circlesStackDiv">
+        <div class="stackHorizontally">
+          <div id="circle_0"></div>
+        </div>
+      </div>
+
+      <div class="filler"></div>
+
+      <div class="stackHorizontally controls stack">
+        <p id="selectedCircle" class="label control">1</p>
+      </div>
+
+      <div class="stackHorizontally controls stack">
+        <button class="button control" id="controlAdd">
+          <span class="material-icons">control_point</span>
+        </button>
+        <button class="button control" id="controlMakeSelectedBigger">
+          <span class="material-icons">add</span>
+        </button>
+        <button class="button control" id="controlMakeSelectedLesser">
+          <span class="material-icons">remove</span>
+        </button>
+      </div>
+
+      <div class="stackHorizontally controls stack">
+        <button class="button control" id="controlLock">
+          <span class="material-icons">lock</span>
+        </button>
+        <button class="button control" id="controlUnlock">
+          <span class="material-icons">lock_open</span>
+        </button>
+        <button class="button control" id="controlLockOnce">
+          <span class="material-icons">enhanced_encryption</span>
+        </button>
+      </div>
+
+      <div class="stackHorizontally controls stack">
+        <button class="button control" id="controlToggleColor">
+          <span class="material-icons">change_circle</span>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let selectedCircle = 0;
+      let circlesNum = 0;
+
+      const circleDefaultSize = 170;
+      const circleMaxSize = 300;
+      const circleMinSize = 50;
+      const circleSizes = [];
+
+      function addCircle(animate) {
+        ++circlesNum;
+
+        const circleArgs = {
+          id: `circle_${circlesNum}`,
+          class: 'circle',
+          text: `${circlesNum}`
+        };
+
+        if (animate)
+          circleArgs['toggle'] = 1;
+
+        $(`#circle_${selectedCircle}`).before(jQuery('<div>', circleArgs));
+        circleSizes.push(circleDefaultSize);
+
+        selectedCircle = circlesNum;
+
+        updateSelectedCircleLabel();
+
+        const addedCircleNumber = selectedCircle;
+        $(`#circle_${selectedCircle}`).mouseover(() => {
+          selectedCircle = addedCircleNumber;
+          updateSelectedCircleLabel();
+        });
+
+        if (animate)
+          $(`#circle_${selectedCircle}`).toggle("slow");
+      }
+
+      function changeSize(diff)
+      {
+        let newSize = circleSizes[selectedCircle - 1] + diff;
+
+        newSize = Math.max(circleMinSize, Math.min(circleMaxSize, newSize));
+
+        $(`#circle_${selectedCircle}`).outerHeight(newSize, true).outerWidth(newSize, true);
+
+        circleSizes[selectedCircle - 1] = newSize;
+      }
+
+      addCircle(false);
+
+      function updateSelectedCircleLabel()
+      {
+        $('#selectedCircle').text(`${selectedCircle}`);
+      }
+
+      $('#controlAdd').click(() => addCircle(true));
+
+      $('#controlMakeSelectedBigger').click(() => changeSize(+20));
+      $('#controlMakeSelectedLesser').click(() => changeSize(-20));
+      
+      function lockSizeControls()
+      {
+        $('#controlMakeSelectedBigger').prop('disabled', true);
+        $('#controlMakeSelectedLesser').prop('disabled', true);
+      }
+
+      $('#controlLock').click(lockSizeControls);
+
+      $('#controlUnlock').click(() => $(':disabled').prop('disabled', false));
+
+      $('#controlLockOnce').one('click', lockSizeControls);
+
+
+      const colors = ['aqua', 'lightsalmon'];
+      let currentColor = 0;
+      function toggleColor()
+      {
+       currentColor =  (currentColor + 1) % 2;
+
+        $('div').each(function () {
+          if (!$(this).hasClass('circle'))
+            return;
+
+          $(this).css('background-color', colors[currentColor]);
+        });
+      }
+      
+      $('#controlToggleColor').click(toggleColor);
+
+      $('body').keydown((event) => {
+        if (event.keyCode === 191)
+          toggleColor();
+        else if (event.keyCode === 220)
+          $(`#circle_${selectedCircle}`).next('.circle').css('background-color', 'gold');
+      });
+
+      $.ajax({
+        complete: () => {
+          $('#name').css('background-color', 'greenyellow')
+        }
+      });
+      $.ajax('http://127.0.0.1:5500/index.html');
+    </script>
+  </body>
+</html>

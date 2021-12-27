@@ -1,0 +1,23 @@
+.center {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.minText {
+  margin: 20px;
+}
+
+.graphic {
+  height: 500px;
+}
+
+h2 {
+  margin: 5px;
+}
+
+h3 {
+  margin: 5px;
+}

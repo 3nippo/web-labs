@@ -1,0 +1,157 @@
+<!-- 
+    Student: Ilya Mazin
+    Group: M8O-106M-21
+    Variant: 11 
+-->
+<div style="margin: 20px" id="description">
+  <h1 id="name">Мазин Илья Александрович</h1>
+  <h2>Группа М8О-106М-21</h2>
+  <h2>Вариант 11</h2>
+
+  <h3>Задание 6: отобразить таблицу с использованием OpenData API</h3>
+</div>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css"/>
+ 
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.js"></script>
+
+    <style>
+      body {
+        margin: 15;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      class TableConstructor
+      {
+        constructor()
+        {
+          this.columns = undefined
+          this.rows = undefined
+        }
+
+        _ExtractData() 
+        {
+          var serializers = {
+            WorkingHours: v => {
+              var result = ""
+              
+              for (const { DayOfWeek, Hours } of v)
+              {
+                result += DayOfWeek + ': ' + Hours + '\t'
+              }
+              
+              return result
+            },
+            PublicPhone: v => {
+              var result = ""
+
+              for (const { PublicPhone } of v)
+              {
+                result += '+7 ' + PublicPhone + '\t'
+              }
+
+              return result
+            },
+            geoData: v => v.coordinates
+          }
+
+          var data = []
+
+          for (const row of this.rows)
+          {
+            var newRow = this.columns.map( ({ Name }) => {
+              var cell = row.Cells[Name]
+              
+              if (serializers.hasOwnProperty(Name))
+                return serializers[Name](cell)
+              else
+                return cell
+            } )
+
+            data.push(newRow)
+          }
+
+          console.log(data)
+          console.log(this.rows)
+
+          return data
+        }
+
+        _ExtractPrettyColumns()
+        {
+          return this.columns.map( ({ Caption }) => { 
+            return { title: Caption } 
+          } )
+        }
+
+        ConstructTable() 
+        {
+          var data = this._ExtractData()
+
+          var columns = this._ExtractPrettyColumns()
+
+          console.log(columns)
+
+          $('#table').DataTable( {
+              data: data,
+              columns: columns
+          } )
+        }
+      }
+
+      var tableConstructor = new TableConstructor()
+      var verySecretKey = 'woow where is it??'
+
+      function onRowsReceived(rows)
+      {
+        tableConstructor.rows = rows;
+        tableConstructor.ConstructTable()
+      }
+
+      function requestRows()
+      {
+        $.get(
+          `https://apidata.mos.ru/v1/datasets/1193/rows?api_key=${verySecretKey}`,
+          (data) => {
+            alert("Rows received")
+            onRowsReceived(data)
+          }
+        )
+      }
+
+      function onColumnsReceived(columns)
+      {
+        tableConstructor.columns = columns
+        requestRows()
+      }
+
+      function requestColumns()
+      {
+        $.get(
+          `https://apidata.mos.ru/v1/datasets/1193?api_key=${verySecretKey}`,
+          (data) => {
+            alert("Columns received")
+            onColumnsReceived(data.Columns)
+          }
+        )
+      }
+
+      function main()
+      {
+        requestColumns()
+      }
+
+      main()
+      
+    </script>
+
+    <table id="table" class="display" width="100%"></table>
+  </body>
+</html>

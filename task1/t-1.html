@@ -1,0 +1,76 @@
+<!-- 
+    Student: Ilya Mazin
+    Group: M8O-106M-21
+    Variant: 17 
+-->
+<h1>Мазин Илья Александрович</h1>
+<h2>Группа М8О-106М-21</h2>
+<h2>Вариант 17</h2>
+<h4>В поле вводится число -- длина строки, состоящей из нулей. <br>При нажатии кнпоки "Run" отрисовывается эта строка и чекбоксы. Каждый чекбокс отвечает за значение в строке.</h4>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 1</title>
+</head>
+<script>
+    function handleChangeChecked(i)
+    {
+        const digitFlags = document.getElementById("digitFlags");
+        
+        if (digitFlags === undefined)
+            return;
+
+        const currentDigitFlags = digitFlags.innerText;
+
+        const isOn = document.getElementById(`checkbox_${i}`).checked;
+        const newDigitChar = isOn ? "1" : "0";
+
+        digitFlags.innerText = currentDigitFlags.slice(0, i) + newDigitChar + currentDigitFlags.slice(i+1, currentDigitFlags.length);
+    }
+
+    function checkboxesAsTableContent(n)
+    {
+        let checkboxes = "<tr>";
+
+        for (let i = 0; i < n; ++i)
+            checkboxes += `<input id="checkbox_${i}" type="checkbox" onclick="handleChangeChecked(${i})">`;
+        
+        checkboxes += "</tr>";
+
+        return checkboxes;
+    }
+
+    function handleSetNFlags()
+    {
+        const n_flags = document.getElementById("n_flags").value;
+
+        const digitFlags = "0".repeat(n_flags);
+
+        const table = document.getElementById("table");
+        table.innerHTML = checkboxesAsTableContent(n_flags);
+
+        table.innerHTML += `
+<tr align="center">
+    <td style="border:0px;">
+        <label id="digitFlags">${digitFlags}</label>
+    </td>
+</tr>`;
+
+    }
+</script>
+<body>
+    <form action="javascript:handleSetNFlags()">
+        <label for="n_flags">Number of flags:</label>
+        <input id="n_flags" type="number" name="n_flags" />
+        <input type="submit" value="Run" />
+    </form>
+    <form>
+        <table id="table" border="2">
+
+        </table>
+    </form>
+</body>
+</html>
