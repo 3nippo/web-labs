@@ -1,0 +1,37 @@
+<table>
+    <row>
+        <dessert>Cupcake</dessert>
+        <ccals>305</ccals>
+        <fat>3.7</fat>
+        <carbs>67</carbs>
+        <protein>4.3</protein>
+    </row>
+    <row>
+        <dessert>Donut</dessert>
+        <ccals>452</ccals>
+        <fat>25</fat>
+        <carbs>51</carbs>
+        <protein>4.9</protein>
+    </row>
+    <row>
+        <dessert>Eclair</dessert>
+        <ccals>262</ccals>
+        <fat>16</fat>
+        <carbs>24</carbs>
+        <protein>6</protein>
+    </row>
+    <row>
+        <dessert>Frozen yoghurt</dessert>
+        <ccals>159</ccals>
+        <fat>6</fat>
+        <carbs>24</carbs>
+        <protein>4</protein>
+    </row>
+    <row>
+        <dessert>Gingerbread</dessert>
+        <ccals>356</ccals>
+        <fat>16</fat>
+        <carbs>49</carbs>
+        <protein>3.9</protein>
+    </row>
+</table>
